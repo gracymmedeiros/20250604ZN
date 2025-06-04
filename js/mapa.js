@@ -191,3 +191,22 @@ function atualizarCamadas() {
 
 mapa.on("zoomend", atualizarCamadas);
 atualizarCamadas();
+// Carrega o mapa GeoJSON com os limites dos municípios
+fetch("data/RS_Municipios_2024.json")
+  .then(response => response.json())
+  .then(geojsonData => {
+    L.geoJSON(geojsonData, {
+      style: function (feature) {
+        return {
+          color: "#333",         // Cor da borda
+          weight: 1,             // Espessura da linha
+          fillOpacity: 0.1       // Transparência do preenchimento
+        };
+      },
+      onEachFeature: function (feature, layer) {
+        if (feature.properties && feature.properties.NOME) {
+          layer.bindPopup(`<strong>${feature.properties.NOME}</strong>`);
+        }
+      }
+    }).addTo(mapa);
+  });
