@@ -1,7 +1,7 @@
 // Inicializa o mapa no centro com um nível de zoom
 const mapa = L.map('map', {
   attributionControl: false
-}).setView([-30.7, -52.0], 7);
+});
 
 L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
   maxZoom: 20
@@ -208,4 +208,7 @@ fetch("data/RS_Municipios_2024.json")
         layer.bindPopup(`<strong>${nome}</strong>`);
       }
     }).addTo(mapa);
+  });
+  // Aqui ele foca o mapa nos limites do RS
+    mapa.fitBounds(camadaGeojson.getBounds());
   });
