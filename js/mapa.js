@@ -189,5 +189,23 @@ function atualizarCamadas() {
   }
 }
 
+// Carrega o mapa GeoJSON com os limites dos municípios do RS
+fetch("data/RS_Municipios_2024.json")
+  .then(response => response.json())
+  .then(geojsonData => {
+    L.geoJSON(geojsonData, {
+      style: function (feature) {
+        const nome = feature.properties.NOME?.toUpperCase();
+        return {
+          color: "#000", // borda preta
+          weight: 1,
+          fillColor: coresPorMunicipio[nome] || "#cccccc",
+          fillOpacity: 0.3
+        };
+      },
+      onEachFeature: function (feature, layer) {
+        const nome = feature.properties.NOME || "Município";
+        layer.bindPopup(`<strong>${nome}</strong>`);
+      }
     }).addTo(mapa);
   });
