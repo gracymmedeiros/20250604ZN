@@ -46,45 +46,43 @@ fullscreenBtn.addEventListener('click', () => {
 
 // Carrega o GeoJSON dos municípios do RS
 map.on('load', () => {
-fetch("data/RS_Municipios_2024.json")
-  .then(response => response.json())
-  .then(geojsonData => {
-    map.addSource('municipios', {
-      type: 'geojson',
-      data: geojsonData
-    });
+  fetch("data/RS_Municipios_2024.json")
+    .then(response => response.json())
+    .then(geojsonData => {
+      map.addSource('municipios', {
+        type: 'geojson',
+        data: geojsonData
+      });
 
-    map.addLayer({
-      id: 'municipios-fill',
-      type: 'fill',
-      source: 'municipios',
-      paint: {
-        'fill-color': '#ccc',
-        'fill-opacity': 0.4
-      }
-    });
+      map.addLayer({
+        id: 'municipios-fill',
+        type: 'fill',
+        source: 'municipios',
+        paint: {
+          'fill-color': '#ccc',
+          'fill-opacity': 0.4
+        }
+      });
 
-    map.addLayer({
-      id: 'municipios-border',
-      type: 'line',
-      source: 'municipios',
-      paint: {
-        'line-color': '#000',
-        'line-width': 1
-      }
-    });
+      map.addLayer({
+        id: 'municipios-border',
+        type: 'line',
+        source: 'municipios',
+        paint: {
+          'line-color': '#000',
+          'line-width': 1
+        }
+      });
 
-    // ⬇️ Aqui ele centraliza o mapa automaticamente no RS
-    const bounds = new maplibregl.LngLatBounds();
-    geojsonData.features.forEach(function(feature) {
-      const coords = feature.geometry.coordinates.flat(Infinity);
-      coords.forEach(coord => bounds.extend(coord));
-    });
-    map.fitBounds(bounds, { padding: 20 });
-  });
+      // ⬇️ Centraliza o mapa no RS com base nos limites do GeoJSON
+      const bounds = new maplibregl.LngLatBounds();
+      geojsonData.features.forEach(function(feature) {
+        const coords = feature.geometry.coordinates.flat(Infinity);
+        coords.forEach(coord => bounds.extend(coord));
+      });
+      map.fitBounds(bounds, { padding: 20 });
 
-
-      // Popup ao clicar nos municípios
+      // Popups ao clicar nos municípios
       map.on('click', 'municipios-fill', (e) => {
         const nome = e.features[0].properties.NOME || 'Município';
         new maplibregl.Popup()
